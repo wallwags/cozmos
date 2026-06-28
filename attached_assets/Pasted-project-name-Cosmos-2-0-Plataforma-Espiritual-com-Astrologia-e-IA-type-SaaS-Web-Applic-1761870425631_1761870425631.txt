@@ -1,0 +1,165 @@
+project:
+  name: "Cosmos 2.0 – Plataforma Espiritual com Astrologia e IA"
+  type: "SaaS Web Application"
+  platform: "Web (Mobile-first e PWA)"
+  description: |
+    Cosmos 2.0 é uma plataforma SaaS interativa que une astrologia, psicologia simbólica e IA
+    para ajudar o usuário a se conhecer melhor. O sistema gera um mapa astral personalizado,
+    interpreta sonhos com IA conversacional e guia o explorador espiritual por meio de conselhos diários,
+    fases lunares e um diário simbólico. A experiência é gamificada, emocional e minimalista.
+
+architecture:
+  backend:
+    framework: "Flask (Python)"
+    services:
+      - Authentication: "Replit Auth (Google, GitHub, Email/Senha) + perfis no PostgreSQL"
+      - Database: "PostgreSQL (usuários, diário, gamificação)"
+      - Cache: "Firestore ou Redis para trânsitos e consultas astrológicas"
+      - AI: "OpenAI GPT (interpretação simbólica e persona onírica)"
+      - Astrology API: "AstrologyAPI ou Swiss Ephemeris"
+  frontend:
+    framework: "React + TailwindCSS + Vite"
+    libraries:
+      - ui: "shadcn/ui, lucide-react"
+      - animation: "framer-motion"
+      - charts: "recharts (wheel chart)"
+      - audio: "Web Audio API para feedback sonoro cósmico"
+  hosting:
+    environment: "Replit Deployments (PaaS) ou Google Cloud Run"
+  secrets:
+    - OPENAI_API_KEY
+    - ASTRO_API_KEY
+    - DATABASE_URL
+    - GOOGLE_APPLICATION_CREDENTIALS_JSON
+
+structure:
+  folders:
+    - /app.py
+    - /api
+    - /static/css
+    - /static/js
+    - /templates
+    - /utils
+    - /components
+  key_files:
+    - .replit: |
+        run = "python app.py"
+    - replit.nix: |
+        { pkgs }: {
+          deps = [ pkgs.python311 pkgs.nodejs pkgs.redis pkgs.ffmpeg ];
+        }
+
+modules:
+  - name: "Cadastro e Autenticação"
+    features:
+      - Login com Replit Auth (Google, GitHub, Email/Senha)
+      - Perfis salvos no PostgreSQL
+      - Sessões persistentes com tokens seguros
+      - Conta anônima temporária para onboarding rápido
+  - name: "Onboarding Gamificado"
+    features:
+      - Fluxo interativo com storytelling cósmico
+      - Campos: data, hora, local de nascimento (autocompletar via Google Maps API)
+      - Feedback visual e sonoro conforme o signo solar
+      - Preview parcial do mapa astral ao final do onboarding
+  - name: "Dashboard – Meu Dia"
+    features:
+      - Exibe energia principal do dia com cards animados
+      - Conselhos práticos baseados nos trânsitos
+      - Sol e Lua atuais + “Humor cósmico coletivo”
+      - Botão “Salvar” e “Compartilhar nas redes”
+      - Cache offline PWA (últimos conselhos)
+  - name: "Aba Sol & Lua"
+    features:
+      - Signos, graus e significados diários
+      - Fases lunares com animação SVG
+      - Próxima fase e recomendações energéticas
+      - Ícones planetários interativos (Sol, Lua, Mercúrio, Vênus, Marte)
+  - name: "Aba Meu Mapa Astral"
+    features:
+      - Wheel chart interativo com hover e zoom
+      - Descrições de Sol, Lua, Ascendente e casas
+      - Modo “Resumo Rápido” com 3 insights principais
+      - Comparação “Hoje vs Mapa Natal”
+  - name: "Diário de Sonhos (IA Conversacional)"
+    features:
+      - Chat com persona “IA Onírica” (voz e texto)
+      - Entrada de voz via Whisper API
+      - Interpretação com:
+          - Tema central
+          - Símbolos-chave
+          - Mensagem do inconsciente
+          - Ritual sugerido
+      - Histórico de sonhos favoritos no PostgreSQL
+  - name: "Gamificação e Progressão"
+    features:
+      - Selos e conquistas (“Semana da Clareza”, “Ciclo Lunar Completo”)
+      - Constelação interativa (cada ação acende uma estrela)
+      - Níveis simbólicos (“Mago Lunar”, “Alquimista Solar”)
+      - Estatísticas cósmicas pessoais e lembretes
+      - Notificações motivacionais (“O Sol sorri para o seu signo hoje 🌞”)
+
+ui_ux:
+  style: "Minimalista Místico e Emocional"
+  color_palette:
+    - "#1A1A2E"  # Fundo profundo espiritual
+    - "#D1C4E9"  # Contraste suave
+    - "#C69AFF"  # Acento místico (Lilás)
+    - "#F9ED69"  # Sol (energia)
+    - "#95E1D3"  # Lua (introspecção)
+  typography:
+    - headings: "Playfair Display"
+    - body: "Inter"
+  layout:
+    - Dashboard modular com cards e microinterações (hover/flip)
+    - Abas laterais com ícones astrológicos e transições líquidas
+    - Fundo dinâmico que muda conforme o signo solar do usuário
+  accessibility:
+    - Dark/light mode automático por horário
+    - Tipografia legível e espaçada
+    - Modo de leitura em voz alta (IA)
+  motion_design:
+    - Animações suaves com framer-motion
+    - Sons leves de constelações nas transições
+
+ai_logic:
+  dream_analysis_prompt: |
+    "Você é a IA Onírica — uma guia simbólica e acolhedora.
+    Analise o seguinte sonho de forma poética e introspectiva.
+    Estruture a resposta assim:
+    🌙 Tema Central
+    🔮 Símbolos-Chave
+    💭 Mensagem do Inconsciente
+    ✨ Ritual Sugerido"
+  astro_prompt_template: |
+    "Com base nos trânsitos planetários atuais, gere:
+    - Energia principal do dia
+    - 3 conselhos práticos e espirituais
+    - Humor cósmico coletivo (resumo leve e otimista)"
+  persona:
+    - name: "IA Onírica"
+      tone: "Empática, mística e simbólica"
+      goal: "Guiar o usuário ao autoconhecimento com leveza"
+
+deployment:
+  steps:
+    - Criar ambiente Flask/React
+    - Configurar Auth + PostgreSQL + Redis
+    - Integrar APIs externas (AstrologyAPI, OpenAI, Whisper)
+    - Implementar PWA e cache offline
+    - Testar onboarding e dashboard
+    - Publicar via Replit Deployments
+  version_control:
+    integration: "GitHub"
+    strategy: "Feature branches + Auto-deploy"
+
+security:
+  measures:
+    - Criptografia de dados sensíveis (data/hora/local)
+    - Consentimento claro de uso simbólico (não-diagnóstico)
+    - Opção de exclusão de conta (GDPR-like)
+    - Replit Secrets para todas as credenciais
+
+languages:
+  agent_interaction: "Português"
+  app_interface: "Português"

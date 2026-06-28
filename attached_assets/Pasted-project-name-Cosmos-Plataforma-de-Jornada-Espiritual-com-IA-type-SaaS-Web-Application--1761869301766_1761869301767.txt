@@ -1,0 +1,159 @@
+project:
+  name: "Cosmos - Plataforma de Jornada Espiritual com IA"
+  type: "SaaS Web Application"
+  platform: "Web (Desktop e Mobile Responsive)"
+  description: |
+    Cosmos é uma plataforma SaaS espiritual que combina astrologia e inteligência artificial
+    para ajudar os usuários a se conhecerem melhor. O sistema gera um mapa astral completo
+    com base na data, hora e local de nascimento e fornece conselhos diários, leitura de trânsitos
+    e interpretação de sonhos por IA. 
+    O público-alvo é o “Explorador Espiritual” (20–35 anos), que busca autoconhecimento prático,
+    profundo e personalizado.
+
+architecture:
+  backend:
+    framework: "Flask (Python)"
+    services:
+      - Authentication: "Firebase Authentication (Google OAuth e Email/Senha)"
+      - Database: "Google Firestore (NoSQL)"
+      - Storage: "Google Cloud Storage (Imagens e Perfis)"
+      - AI Integration: "OpenAI GPT (Interpretação de sonhos e simbologia)"
+      - Astrology API: "AstrologyAPI ou Swiss Ephemeris"
+  frontend:
+    framework: "React + TailwindCSS"
+    libraries:
+      - ui: "shadcn/ui, lucide-react"
+      - animation: "framer-motion"
+      - charts: "recharts"
+    build_tool: "Vite"
+  hosting:
+    environment: "Replit Deployments ou Google Cloud Run"
+  secrets:
+    - OPENAI_API_KEY
+    - ASTRO_API_KEY
+    - GOOGLE_APPLICATION_CREDENTIALS_JSON
+
+structure:
+  folders:
+    - /app.py
+    - /static/css
+    - /static/js
+    - /templates
+    - /utils
+    - /components
+  key_files:
+    - .replit: |
+        run = "python app.py"
+    - replit.nix: |
+        { pkgs }: {
+          deps = [ pkgs.python311 pkgs.nodejs pkgs.ffmpeg ];
+        }
+
+modules:
+  - name: "Onboarding e Geração de Mapa Astral"
+    features:
+      - Formulário de cadastro com data/hora/local de nascimento
+      - Geração automática do mapa astral (via API)
+      - Armazenamento de perfil no Firestore
+      - Mensagem de boas-vindas personalizada
+  - name: "Dashboard – Meu Dia"
+    features:
+      - Exibe energia e conselhos do dia
+      - Cards com Sol e Lua de hoje
+      - Indicação de períodos ativos e trânsitos
+  - name: "Aba Sol e Lua"
+    features:
+      - Signos, graus e significados
+      - Calendário lunar com fases do mês
+      - Interpretação energética do dia
+  - name: "Aba Mapa Astral"
+    features:
+      - Wheel chart interativo (React Charts)
+      - Descrições personalizadas de Sol, Lua e Ascendente
+      - Lista de planetas e casas clicáveis
+  - name: "Diário de Sonhos (IA)"
+    features:
+      - Campo de texto para sonho
+      - IA retorna temas, símbolos e reflexão final
+      - Histórico salvo no Firestore
+
+security:
+  best_practices:
+    - Usar Replit Secrets para todas as credenciais
+    - Não armazenar chaves no código
+    - Limitar escopo de acesso no Firestore (regra por UID)
+    - Filtro de segurança nas respostas da IA (sem conteúdo alarmista)
+
+ui_ux:
+  style: "Minimalista, suave, espiritual e responsivo"
+  color_palette:
+    - "#1A1A2E"  # fundo escuro espiritual
+    - "#E0E0E0"  # texto neutro
+    - "#C69AFF"  # acento místico (Lilás)
+    - "#F9ED69"  # sol
+    - "#95E1D3"  # lua
+  layout:
+    - Dashboard com cards e painéis
+    - Abas de navegação lateral com ícones astrológicos
+    - Animações suaves com framer-motion
+  accessibility:
+    - Tipografia clara e espaçada
+    - Dark/light mode automático
+    - Leitura por voz opcional para os textos de interpretação
+
+ai_logic:
+  dream_analysis_prompt: |
+    "Analise o seguinte sonho segundo a psicologia junguiana e arquétipos simbólicos.
+    Responda com: 
+    - Temas principais
+    - Símbolos-chave
+    - Reflexão guiada em uma frase final"
+  astro_prompt_template: |
+    "Gere conselhos astrológicos para o usuário com base nos trânsitos atuais.
+    Informe: energia principal, datas vigentes e 3 orientações práticas para o dia."
+
+deployment:
+  steps:
+    - Criar ambiente Flask/React via replit.nix
+    - Configurar Firestore e Authentication
+    - Integrar APIs externas (AstrologyAPI, OpenAI)
+    - Criar interface e componentes React
+    - Testar signup/login e dashboard
+    - Publicar via Replit Deployments
+  version_control:
+    integration: "GitHub"
+    strategy: "Feature branches + Auto-deploy"
+
+languages:
+  agent_interaction: "Português"
+  app_interface: "Português"
+💡 Sugestões de Melhoria (UI/UX + Produto + Escalabilidade)
+🔮 UX / Interface
+Onboarding interativo e emocional:
+Em vez de um formulário frio, use um fluxo visual tipo “journey” (com ícones e mensagens tipo “Vamos descobrir seu mapa cósmico!”).
+→ Aumenta engajamento inicial e reduz bounce rate.
+
+Dashboard Modular & Dinâmico:
+Cards animados mostrando Sol/Lua, conselhos, sonhos — cada um com microinterações (hover, flip card, vibração sutil).
+
+Ilustrações Astrológicas SVG:
+Use ícones suaves e constelações animadas no background com three.js leve (para “vibe mística” sem sobrecarregar o UX).
+
+Dream Journal com Chat-style Analysis:
+Transforme a leitura de sonhos em um chat com a “IA Onírica” → aproxima o usuário emocionalmente da ferramenta.
+
+Gamificação leve:
+
+Selos (“Semana da Clareza”, “Ciclo Lunar Completo”)
+
+Sistema de progresso espiritual (ex: níveis ou constelações desbloqueadas)
+
+⚙️ Tech e Escalabilidade
+Adotar Serverless Functions (Cloud Functions) para cálculos astrológicos pesados.
+
+Caching de trânsitos planetários via Redis ou Firestore TTL.
+
+Camada offline PWA (para leitura dos conselhos sem internet).
+
+Analytics (Mixpanel ou Firebase) para mapear comportamento e retenção.
+

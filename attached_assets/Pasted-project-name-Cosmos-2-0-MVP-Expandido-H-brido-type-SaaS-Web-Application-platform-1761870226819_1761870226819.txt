@@ -1,0 +1,176 @@
+project:
+  name: "Cosmos 2.0 – MVP Expandido (Híbrido)"
+  type: "SaaS Web Application"
+  platform: "Web (Mobile-first, PWA-ready)"
+  short_description: >
+    Plataforma espiritual que combina astrologia e IA para conselhos diários, mapa natal
+    e interpretação de sonhos. Lançamento rápido com base robusta para ativar recursos de
+    voz, cache e animações em iterações seguintes.
+
+architecture:
+  backend:
+    framework: "Flask (Python)"
+    primary_db: "PostgreSQL"      # perfis, diário, gamificação (core)
+    cache: "Redis (ou Firestore TTL)" # trânsitos e dados voláteis (iteration-1)
+    ai_service: "OpenAI GPT (texto) - core; Whisper integrado em iteration-1"
+    astro_service: "AstrologyAPI (ou Swiss Ephemeris)"
+    auth: "Replit Auth (Google/GitHub/Email) + sessions em DB"
+  frontend:
+    framework: "React + Vite + TailwindCSS"
+    ui_libraries: ["shadcn/ui","lucide-react","recharts"]
+    pwa_ready: true   # service worker scaffold (core) + full offline in iteration-1
+  hosting:
+    primary: "Replit Deployments"
+    optional_scaling: "Google Cloud Run (for heavy tasks like batch ephemeris)"
+  secrets:
+    - OPENAI_API_KEY
+    - ASTRO_API_KEY
+    - DATABASE_URL
+    - REDIS_URL
+    - REPLIT_AUTH_KEYS
+    - GOOGLE_MAPS_API_KEY
+
+project_scope:
+  goal: "Validar product-market fit com Explorador Espiritual mantendo caminho claro para features ricas."
+  success_criteria:
+    - 1000 MAU dentro de 3 meses (meta inicial)
+    - Taxa de ativação (signup -> completar onboarding) >= 40%
+    - Retenção 7 dias >= 20%
+
+modules:
+  - id: onboarding_auth
+    name: "Autenticação & Onboarding"
+    priority: "core"
+    deliverables:
+      - Replit Auth integration (Google, GitHub, email)
+      - Onboarding gamificado básico (data,hora,local) com microcopy
+      - Save profile to PostgreSQL
+      - UI: preview parcial do mapa (Sol & Ascendente)
+  - id: map_generation
+    name: "Geração e Armazenamento do Mapa Astral"
+    priority: "core"
+    deliverables:
+      - Integrar AstrologyAPI para cálculo natal
+      - Persistir mapa natal em PostgreSQL
+      - Endpoint API: /api/user/{id}/natal
+      - Placeholder wheel-chart component (interativo básico)
+  - id: dashboard_meudia
+    name: "Dashboard – Meu Dia"
+    priority: "core"
+    deliverables:
+      - Exibir Sol & Lua atuais, energia principal e 2–3 conselhos
+      - Cards animados simples (framer-motion)
+      - Botões: Salvar conselho, Compartilhar
+      - Cache PWA: store último conselho para offline read
+  - id: dreams_ai_text
+    name: "Diário de Sonhos (IA - Texto)"
+    priority: "core"
+    deliverables:
+      - Input texto + botão 'Analisar'
+      - OpenAI GPT prompt (persona IA Onírica) – respostas: tema, símbolos, ritual
+      - Persistir sonhos no PostgreSQL
+      - UI: chat-like minimal
+  - id: ui_basic_tiles
+    name: "UI / Design básico (Mobile-first)"
+    priority: "core"
+    deliverables:
+      - Paleta e tipografia definidas
+      - Layout responsivo para onboarding, dashboard, mapa e diário
+      - Dark/light automatic
+  - id: pwa_serviceworker
+    name: "PWA Scaffold & Offline"
+    priority: "iteration-1"
+    deliverables:
+      - Service worker skeleton (caching strategy)
+      - Offline fallback pages and cached last daily advice
+      - Installable app manifest
+  - id: redis_trânsito_cache
+    name: "Redis/Firestore Cache para Trânsitos"
+    priority: "iteration-1"
+    deliverables:
+      - Redis infra para resultados de trânsitos (TTL)
+      - Cache middleware no backend para reduzir chamadas à AstrologyAPI
+  - id: whisper_voice_input
+    name: "Entrada de voz (Whisper) & Transcrição"
+    priority: "iteration-1"
+    deliverables:
+      - Integrar Whisper para voz->texto (dream journal)
+      - UI: botão gravar, controle de permissões de mic
+      - Fallback para texto
+  - id: ai_onirica_conversational
+    name: "IA Onírica Conversacional (chat + voz)"
+    priority: "iteration-2"
+    deliverables:
+      - Persona conversacional completa (context window, session memory)
+      - Text + voice responses (TTS) – leitura em voz alta
+      - Moderation & safety filters
+  - id: wheel_chart_advanced
+    name: "Wheel Chart Interativo Avançado"
+    priority: "iteration-2"
+    deliverables:
+      - Zoom, hover, detalhes por planeta/casa
+      - Compare Natal vs Trânsitos (visual overlay)
+  - id: gamification_advanced
+    name: "Gamificação & Constelação Interativa"
+    priority: "iteration-2"
+    deliverables:
+      - Sistema de selos e missões
+      - Constelação animada que reflete progresso
+      - Backend achievements + notification scheduler
+  - id: analytics_monitoring
+    name: "Observabilidade e Analytics"
+    priority: "core"
+    deliverables:
+      - Basic telemetry (Firebase Analytics or Mixpanel)
+      - Error tracking (Sentry)
+      - Dashboard com: signups, ativação, retenção, erros
+  - id: security_compliance
+    name: "Segurança & Privacidade"
+    priority: "core"
+    deliverables:
+      - Encrypt nascimento sensível at rest
+      - Consentimento claro e política de privacidade
+      - Account deletion flow (GDPR-like)
+      - Rate limits for AI endpoints
+
+dev_process:
+  repo: "GitHub integration; main branch protected"
+  branching: "feature/* -> PR -> CI -> main"
+  ci_cd:
+    - run_tests: "unit tests for backend + frontend"
+    - linting: "prettier + eslint + flake8"
+    - auto_deploy: "main -> Replit Deployments after approval"
+  checkpoints:
+    - checkpoint_1: "Core features working end-to-end (auth, onboarding, map, dashboard, dreams text) - deployable"
+    - checkpoint_2: "iteration-1 features (PWA, Redis, Whisper) integrated in staging"
+    - checkpoint_3: "iteration-2 polish + analytics + performance tuning"
+
+testing:
+  - unit_tests: backend logic, astro calculations (mocked), AI prompt output structure
+  - e2e_tests: signup -> onboarding -> dashboard -> dream analyze flow
+  - manual_ux: onboarding completion funnel, mobile usability tests
+  - load_test: simulate trânsitos API traffic
+
+cost_considerations:
+  - monitor OpenAI tokens usage and set monthly cap
+  - cache aggressively to avoid AstrologyAPI costs
+  - plan Redis/Cloud Run scaling thresholds
+
+run_instructions_for_agent:
+  - step_1: "Initialize repo and file structure (.replit, replit.nix, app.py, frontend scaffold)."
+  - step_2: "Integrate Replit Auth and PostgreSQL connection; create DB schema for users, maps, dreams, achievements."
+  - step_3: "Implement onboarding flow and basic map generation (AstrologyAPI)."
+  - step_4: "Build dashboard (core cards) and dreams (text) end-to-end; add basic analytics."
+  - step_5: "Create PWA scaffold + Redis cache wiring (iteration-1) but keep Whisper disabled until env keys available."
+  - step_6: "Deploy core to staging; run tests and get checkpoint_1."
+  - step_7: "After checkpoint_1 approval, enable iteration-1 tasks, then iteration-2."
+
+deliverables_on_complete:
+  - working Replit project with core flows deployed
+  - documentation: README with env vars, schema, API contracts, how to enable iteration features
+  - test report + basic analytics dashboard
+
+notes:
+  - "Keep IA prompts versioned and stored (prompt-kit) so they can be tuned without code changes."
+  - "Mark heavy processes (ephemeris batch jobs) to run serverless outside main Replit container when scaling."
+
